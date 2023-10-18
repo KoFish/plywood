@@ -1,4 +1,4 @@
-SRC += plywood.c
+SRC += plywood.c plywood_oled.c
 
 SWAP_HANDS_ENABLE = yes
 WPM_ENABLE = yes
