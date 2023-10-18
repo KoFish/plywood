@@ -1,5 +1,4 @@
 #ifdef OLED_ENABLE
-#   define OLED_FONT_H "./glcdfont.c"
+#   undef OLED_FONT_H
+#   define OLED_FONT_H "plywood_font.c"
 #endif
-
-#error "Sure can"
