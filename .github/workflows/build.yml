@@ -1,5 +1,9 @@
 name: Build QMK firmware
-on: [push, workflow_dispatch]
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
 
 jobs:
     build:
@@ -27,12 +31,15 @@ jobs:
 
         - name: Build firmware
           run : qmk compile "users/${{ github.actor }}/${{ matrix.file }}"
+          env:
+            CONVERT_TO: liatris
+
 
         - name: Archive firmware
           uses: actions/upload-artifact@v3
           continue-on-error: true
           with:
-            name: ${{ matrix.file }}_${{ github.actor }}
+            name: ${{ matrix.file }}_${{ github.actor }}-${{ github.ref }}
             path: |
                 *.hex
                 *.bin
