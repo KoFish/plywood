@@ -39,7 +39,7 @@ jobs:
           uses: actions/upload-artifact@v3
           continue-on-error: true
           with:
-            name: ${{ matrix.file }}_${{ github.actor }}-${{ github.ref }}
+            name: ${{ matrix.file }}_${{ github.actor }}-${{ github.ref_name }}
             path: |
                 *.hex
                 *.bin
