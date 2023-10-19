@@ -41,6 +41,8 @@ jobs:
           with:
             name: ${{ matrix.file }}_${{ github.actor }}-${{ github.ref_name }}
             path: |
+                readme.md
+                license.md
                 *.hex
                 *.bin
                 *.uf2
