@@ -6,13 +6,17 @@
 #   include "plywood_oled.h"
 
 bool oled_task_user(void) {
-    render_logo();
-    render_space();
-    render_plywood_layer_indicator();
-    render_mod_status_gui_alt(get_mods()|get_oneshot_mods());
-    render_mod_status_ctrl_shift(get_mods()|get_oneshot_mods());
-    render_kb_LED_state();
-    return false;
+    if (is_keyboard_master()) {
+        render_logo();
+        render_space();
+        render_plywood_layer_indicator();
+        render_mod_status_gui_alt(get_mods()|get_oneshot_mods());
+        render_mod_status_ctrl_shift(get_mods()|get_oneshot_mods());
+        render_kb_LED_state();
+        return false;
+    } else {
+        return true;
+    }
 }
 #endif // OLED
 
@@ -40,3 +44,12 @@ bool caps_word_press_user(uint16_t keycode) {
     }
 }
 #endif // CAPS_WORDS
+
+void keyboard_pre_init_user(void) {
+    // Turn off power led on keyboard.
+    // Set our LED pin as output
+    setPinOutput(24);
+    // Turn the LED off
+    // (Due to technical reasons, high is off and low is on)
+    writePinHigh(24);
+}
