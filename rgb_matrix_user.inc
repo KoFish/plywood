@@ -14,16 +14,16 @@ static bool PLYWOOD_complex_run(effect_params_t* params) {
   RGB rgb = rgb_matrix_hsv_to_rgb(hsv);
   for (uint8_t i = led_min; i < led_max; i++) {
     RGB_MATRIX_TEST_LED_FLAGS();
-    if (HAS_FLAG(g_led_config.flags[i], LED_FLAG_KEYLIGHT)) {
+    if (HAS_FLAGS(g_led_config.flags[i], LED_FLAG_KEYLIGHT)) {
         rgb_matrix_set_color(i, 0, rgb.g, 0);
-    } else if (HAS_FLAG(g_led_config.flags[i], LED_FLAG_UNDERGLOW)) {
+    } else if (HAS_FLAGS(g_led_config.flags[i], LED_FLAG_UNDERGLOW)) {
         rgb_matrix_set_color(i, rgb.r, 0, 0);
     } else {
         rgb_matrix_set_color(i, rgb.r, rgb.g, rgb.b);
     }
   }
 
-  return led_max < DRIVER_LED_TOTAL;
+  return rgb_matrix_check_finished_leds(led_max);
 }
 static bool PLYWOOD(effect_params_t* params) {
   if (params->init) PLYWOOD_complex_init(params);
