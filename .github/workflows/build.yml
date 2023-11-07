@@ -14,6 +14,7 @@ jobs:
             matrix:
                 file:
                 - seniply-tarmak2.json
+                - plywood-tarmak2.json
         steps:
         - name: Disable git safe directory checks
           run : git config --global --add safe.directory '*'
