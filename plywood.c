@@ -45,6 +45,16 @@ bool caps_word_press_user(uint16_t keycode) {
 }
 #endif // CAPS_WORDS
 
+#ifdef COMBO_ENABLE
+// Period + Backspace => Repeat.
+const uint16_t repeat_combo[] PROGMEM = {KC_SPC, KC_ENT, COMBO_END};
+
+combo_t key_combos[] = {
+    COMBO(repeat_combo, REPEAT),
+};
+uint16_t COMBO_LEN = sizeof(key_combos) / sizeof(*key_combos);
+#endif
+
 void keyboard_pre_init_user(void) {
     // Turn off power led on keyboard.
     // Set our LED pin as output
