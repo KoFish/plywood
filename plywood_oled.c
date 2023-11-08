@@ -60,3 +60,9 @@ void render_plywood_layer_indicator(void) {
     oled_write_P(IS_LAYER_ON(_SIX) ? LAY_BOTTOM_RIGHT_ON_2 : LAY_BOTTOM_RIGHT_OFF_2, false);
 }
 
+
+void render_plywood_text(void) {
+    uint8_t value = get_current_wpm();
+    oled_write_P(PSTR("W:"), false);
+    oled_write(get_u8_str(value, ' '), false);
+}

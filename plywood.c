@@ -8,7 +8,8 @@
 bool oled_task_user(void) {
     if (is_keyboard_master()) {
         render_logo();
-        render_space();
+        //render_space();
+        render_plywood_text();
         render_plywood_layer_indicator();
         render_mod_status_gui_alt(get_mods()|get_oneshot_mods());
         render_mod_status_ctrl_shift(get_mods()|get_oneshot_mods());

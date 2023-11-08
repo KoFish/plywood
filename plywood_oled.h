@@ -3,6 +3,7 @@
 #include "plywood.h"
 
 void render_plywood_layer_indicator(void);
+void render_plywood_text(void);
 
 // FROM LILY:
 void render_kb_LED_state(void);
