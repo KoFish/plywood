@@ -74,15 +74,12 @@ static HSV PLYWOOD_keylight(HSV hsv, uint16_t x, int16_t dx, uint16_t y, int16_t
             hsv = PLYWOOD_layer_highlight(3, hsv, fast_phase, slow_phase);
             break;
           case 157 ... 161: // #2 159
-            hsv.h = add8_rollover(hsv.h, 64);
             hsv = PLYWOOD_layer_highlight(1, hsv, fast_phase, slow_phase);
             break;
           case 171 ... 175: // #3 173
-            hsv.h = add8_rollover(hsv.h, 64);
             hsv = PLYWOOD_layer_highlight(4, hsv, fast_phase, slow_phase);
             break;
           case 186 ... 190: // #4 188
-            hsv.h = add8_rollover(hsv.h, 64);
             hsv = PLYWOOD_layer_highlight(2, hsv, fast_phase, slow_phase);
             break;
       }
