@@ -46,6 +46,7 @@ bool caps_word_press_user(uint16_t keycode) {
 }
 #endif // CAPS_WORDS
 
+#ifdef PLYWOOD_DISABLE_POWERLIGHT
 void keyboard_pre_init_user(void) {
     // Turn off power led on keyboard.
     // Set our LED pin as output
@@ -54,3 +55,4 @@ void keyboard_pre_init_user(void) {
     // (Due to technical reasons, high is off and low is on)
     writePinHigh(24);
 }
+#endif

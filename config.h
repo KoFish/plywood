@@ -19,7 +19,7 @@
 #   define RGB_DISABLE_WHEN_USB_SUSPENDED
 #   define RGB_MATRIX_DEFAULT_MODE              RGB_MATRIX_CUSTOM_PLYWOOD
 #   define RGB_MATRIX_DEFAULT_HUE               10
-#   define RGB_MATRIX_DEFAULT_SPD               160
+#   define RGB_MATRIX_DEFAULT_SPD               80
 #   define RGB_MATRIX_SPD_STEP                  8
 #endif
 
@@ -37,3 +37,8 @@
 #define ONESHOT_TIMEOUT 800
 #define ONESHOT_TAP_TOGGLE 3
 #define PLYWOOD_UNDERGLOW_VARIATION 8
+#define PLYWOOD_DISABLE_POWERLIGHT
+
+#define SPLIT_LAYER_STATE_ENABLE
+#define SPLIT_OLED_ENABLE
+#define SPLIT_MODS_ENABLE
