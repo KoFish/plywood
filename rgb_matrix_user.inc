@@ -4,27 +4,42 @@ RGB_MATRIX_EFFECT(PLYWOOD)
 #   define PLYWOOD_UNDERGLOW_VARIATION    6
 #endif
 
+#ifndef PLYWOOD_KEYLIGHT_SHIFT
+#   define PLYWOOD_KEYLIGHT_SHIFT 128
+#endif
+
+#ifndef PLYWOOD_KEYLIGHT_LAYER_SELECT_SHIFT
+#   define PLYWOOD_KEYLIGHT_LAYER_SELECT_SHIFT 16
+#endif
+
 // Step 2.
 // Define effects inside the `RGB_MATRIX_CUSTOM_EFFECT_IMPLS` ifdef block
 #ifdef RGB_MATRIX_CUSTOM_EFFECT_IMPLS
 #include "quantum.h"
 
 static uint8_t add8_rollover(uint8_t a, uint8_t b) {
-  int16_t i = a + b;
+  uint16_t i = a + b;
   if (i > 0xFF) { return i - 0xFF; }
   else { return i; }
+}
+
+static uint8_t sub8_rollover(uint8_t a, uint8_t b) {
+    int16_t i = a - b;
+    if (i < 0) { return 0xFF + i; }
+    else { return i; }
 }
 
 static void PLYWOOD_complex_init(effect_params_t* params) { }
 
 static HSV PLYWOOD_underglow(HSV hsv, uint16_t x, int16_t dx, uint16_t y, int16_t dy, uint8_t dist, uint16_t time) {
-  hsv.h = qsub8(hsv.h, PLYWOOD_UNDERGLOW_VARIATION / 2) + scale8(cos8(time), PLYWOOD_UNDERGLOW_VARIATION);
+  uint8_t animation = scale8(cos8(time), PLYWOOD_UNDERGLOW_VARIATION);
+  hsv.h = sub8_rollover(hsv.h, PLYWOOD_UNDERGLOW_VARIATION / 2) + animation;
   return hsv;
 }
 
 static HSV PLYWOOD_layer_highlight(uint8_t layer, HSV hsv, uint8_t phase, uint8_t slow_phase) {
   if (IS_LAYER_ON(layer)) {
-    hsv.h = add8_rollover(hsv.h, 32);
+    hsv.h = add8_rollover(hsv.h, PLYWOOD_KEYLIGHT_LAYER_SELECT_SHIFT);
     hsv.s = sub8(hsv.s, scale8(phase, hsv.s / 2));
     hsv.v = hsv.v - scale8(0xFF - phase, hsv.v / 3);
   } else {
@@ -32,6 +47,12 @@ static HSV PLYWOOD_layer_highlight(uint8_t layer, HSV hsv, uint8_t phase, uint8_
   }
   return hsv;
 }
+
+#define PL_INDICATE(id) \
+  if (PLYWOOD_INDICATOR_ ## id) { \
+    hsv.v = orgv; \
+    hsv = PLYWOOD_layer_highlight((PLYWOOD_INDICATOR_LAYER_ ## id), hsv, fast_phase, slow_phase); \
+  }
 
 static HSV PLYWOOD_keylight(HSV hsv, uint16_t x, int16_t dx, uint16_t y, int16_t dy, uint8_t dist, uint16_t time) {
   // scale8_video(i, sc) = ((i * sc) / 256) +? 1 = [1-sc]
@@ -43,49 +64,21 @@ static HSV PLYWOOD_keylight(HSV hsv, uint16_t x, int16_t dx, uint16_t y, int16_t
   uint8_t fast_phase = sin8(add8_rollover(add8_rollover(theta, theta), theta));
   hsv.v = sub8(hsv.v, scale8(slow_phase, hsv.v));
 
-  switch (y) {
-    case 39 ... 42: // Special key 41
-      switch (x) {
-        case 85 ... 89: // Left side 87
-        case 135 ... 139: // Right side 137
-          hsv.h = add8_rollover(hsv.h, 64);
-          break;
-      }
-      break;
-    case 59 ... 67: // Bottom row 62, 64
-      hsv.h = add8_rollover(hsv.h, 64);
-      hsv.v = orgv;
-      switch (x) { // Left side
-          case 85 ... 89: // #4 87
-            hsv = PLYWOOD_layer_highlight(3, hsv, fast_phase, slow_phase);
-            break;
-          case 63 ... 68: // #3 65
-            hsv = PLYWOOD_layer_highlight(1, hsv, fast_phase, slow_phase);
-            break;
-          case 49 ... 53: // #2 51
-            hsv = PLYWOOD_layer_highlight(4, hsv, fast_phase, slow_phase);
-            break;
-          case 34 ... 38: // #1 36
-            hsv = PLYWOOD_layer_highlight(2, hsv, fast_phase, slow_phase);
-            break;
-      }
-      switch (x) { // Left side
-          case 135 ... 139: // #1 137
-            hsv = PLYWOOD_layer_highlight(3, hsv, fast_phase, slow_phase);
-            break;
-          case 157 ... 161: // #2 159
-            hsv = PLYWOOD_layer_highlight(1, hsv, fast_phase, slow_phase);
-            break;
-          case 171 ... 175: // #3 173
-            hsv = PLYWOOD_layer_highlight(4, hsv, fast_phase, slow_phase);
-            break;
-          case 186 ... 190: // #4 188
-            hsv = PLYWOOD_layer_highlight(2, hsv, fast_phase, slow_phase);
-            break;
-      }
-  }
+  PL_INDICATE(L1);
+  PL_INDICATE(L2);
+  PL_INDICATE(L3);
+  PL_INDICATE(L4);
+  PL_INDICATE(L5);
+  PL_INDICATE(R1);
+  PL_INDICATE(R2);
+  PL_INDICATE(R3);
+  PL_INDICATE(R4);
+  PL_INDICATE(R5);
+
   return hsv;
 }
+
+#undef PL_INDICATE
 
 static bool PLYWOOD_complex_run(effect_params_t* params) {
   RGB_MATRIX_USE_LIMITS(led_min, led_max);
