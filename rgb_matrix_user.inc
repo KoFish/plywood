@@ -17,6 +17,24 @@ RGB_MATRIX_EFFECT(PLYWOOD)
 #ifdef RGB_MATRIX_CUSTOM_EFFECT_IMPLS
 #include "quantum.h"
 
+typedef struct {
+    uint8_t x;
+    uint8_t y;
+    uint8_t layer;
+} plywood_keyindicator_t;
+
+static plywood_keyindicator_t plywood_keyindicator[] = {
+    {72, 4, 1},
+    {72, 19, 2},
+    {72, 34, 3},
+    {72, 49, 4},
+
+    {152, 4, 1},
+    {152, 19, 2},
+    {152, 34, 3},
+    {152, 49, 4},
+};
+
 static uint8_t add8_rollover(uint8_t a, uint8_t b) {
   uint16_t i = a + b;
   if (i > 0xFF) { return i - 0xFF; }
@@ -42,8 +60,6 @@ static HSV PLYWOOD_layer_highlight(uint8_t layer, HSV hsv, uint8_t phase, uint8_
     hsv.h = add8_rollover(hsv.h, PLYWOOD_KEYLIGHT_LAYER_SELECT_SHIFT);
     hsv.s = sub8(hsv.s, scale8(phase, hsv.s / 2));
     hsv.v = hsv.v - scale8(0xFF - phase, hsv.v / 3);
-  } else {
-    hsv.v = hsv.v - scale8(0xFF - slow_phase, (hsv.v * 2) / 3);
   }
   return hsv;
 }
@@ -64,16 +80,18 @@ static HSV PLYWOOD_keylight(HSV hsv, uint16_t x, int16_t dx, uint16_t y, int16_t
   uint8_t fast_phase = sin8(add8_rollover(add8_rollover(theta, theta), theta));
   hsv.v = sub8(hsv.v, scale8(slow_phase, hsv.v));
 
-  PL_INDICATE(L1);
-  PL_INDICATE(L2);
-  PL_INDICATE(L3);
-  PL_INDICATE(L4);
-  PL_INDICATE(L5);
-  PL_INDICATE(R1);
-  PL_INDICATE(R2);
-  PL_INDICATE(R3);
-  PL_INDICATE(R4);
-  PL_INDICATE(R5);
+  for ( uint8_t i = 0; i < sizeof(plywood_keyindicator)/sizeof(plywood_keyindicator_t); i++) {
+    plywood_keyindicator_t indicator = plywood_keyindicator[i];
+    if (indicator.x == x && indicator.y == y) {
+      hsv.v = orgv;
+      return PLYWOOD_layer_highlight(indicator.layer, hsv, fast_phase, slow_phase);
+    }
+  }
+  if (x >= 62 || (x >= 87 && x <= 137)) {
+    hsv.v = orgv;
+    hsv.v = hsv.v - scale8(0xFF - slow_phase, (hsv.v * 2) / 3);
+    return hsv;
+  }
 
   return hsv;
 }
