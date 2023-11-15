@@ -24,15 +24,15 @@ typedef struct {
 } plywood_keyindicator_t;
 
 static plywood_keyindicator_t plywood_keyindicator[] = {
-    {72, 4, 1},
-    {72, 19, 2},
-    {72, 34, 3},
-    {72, 49, 4},
+    {29, 2, 1},
+    {43, 0, 2},
+    {58, 2, 3},
+    {72, 4, 4},
 
     {152, 4, 1},
-    {152, 19, 2},
-    {152, 34, 3},
-    {152, 49, 4},
+    {166, 2, 2},
+    {181, 0, 3},
+    {195, 2, 4},
 };
 
 static uint8_t add8_rollover(uint8_t a, uint8_t b) {
@@ -55,48 +55,36 @@ static HSV PLYWOOD_underglow(HSV hsv, uint16_t x, int16_t dx, uint16_t y, int16_
   return hsv;
 }
 
-static HSV PLYWOOD_layer_highlight(uint8_t layer, HSV hsv, uint8_t phase, uint8_t slow_phase) {
-  if (IS_LAYER_ON(layer)) {
-    hsv.h = add8_rollover(hsv.h, PLYWOOD_KEYLIGHT_LAYER_SELECT_SHIFT);
-    hsv.s = sub8(hsv.s, scale8(phase, hsv.s / 2));
-    hsv.v = hsv.v - scale8(0xFF - phase, hsv.v / 3);
-  }
+static HSV PLYWOOD_layer_highlight(HSV hsv, uint8_t phase, uint8_t slow_phase) {
+  hsv.h = add8_rollover(hsv.h, PLYWOOD_KEYLIGHT_LAYER_SELECT_SHIFT);
+  hsv.s = sub8(hsv.s, scale8(phase, hsv.s / 2));
+  hsv.v = hsv.v - scale8(0xFF - phase, hsv.v / 3);
   return hsv;
 }
-
-#define PL_INDICATE(id) \
-  if (PLYWOOD_INDICATOR_ ## id) { \
-    hsv.v = orgv; \
-    hsv = PLYWOOD_layer_highlight((PLYWOOD_INDICATOR_LAYER_ ## id), hsv, fast_phase, slow_phase); \
-  }
 
 static HSV PLYWOOD_keylight(HSV hsv, uint16_t x, int16_t dx, uint16_t y, int16_t dy, uint8_t dist, uint16_t time) {
   // scale8_video(i, sc) = ((i * sc) / 256) +? 1 = [1-sc]
   // sin8(d) = sine of d [0-255] gives a value between [0-255]
   uint8_t theta = time + dist;
   if (hsv.v == 0) hsv.v = 1;
-  uint8_t orgv = hsv.v;
   uint8_t slow_phase = sin8(theta);
   uint8_t fast_phase = sin8(add8_rollover(add8_rollover(theta, theta), theta));
-  hsv.v = sub8(hsv.v, scale8(slow_phase, hsv.v));
 
   for ( uint8_t i = 0; i < sizeof(plywood_keyindicator)/sizeof(plywood_keyindicator_t); i++) {
     plywood_keyindicator_t indicator = plywood_keyindicator[i];
-    if (indicator.x == x && indicator.y == y) {
-      hsv.v = orgv;
-      return PLYWOOD_layer_highlight(indicator.layer, hsv, fast_phase, slow_phase);
+    if (indicator.x == x && indicator.y == y && IS_LAYER_ON(indicator.layer)) {
+      return PLYWOOD_layer_highlight(hsv, fast_phase, slow_phase);
     }
   }
   if (x >= 62 || (x >= 87 && x <= 137)) {
-    hsv.v = orgv;
+    hsv.h = add8_rollover(hsv.h, PLYWOOD_KEYLIGHT_SHIFT);
     hsv.v = hsv.v - scale8(0xFF - slow_phase, (hsv.v * 2) / 3);
     return hsv;
   }
 
+  hsv.v = sub8(hsv.v, scale8(slow_phase, hsv.v));
   return hsv;
 }
-
-#undef PL_INDICATE
 
 static bool PLYWOOD_complex_run(effect_params_t* params) {
   RGB_MATRIX_USE_LIMITS(led_min, led_max);
