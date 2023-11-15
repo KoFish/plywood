@@ -51,7 +51,7 @@ static void PLYWOOD_complex_init(effect_params_t* params) { }
 
 static HSV PLYWOOD_underglow(HSV hsv, uint16_t x, int16_t dx, uint16_t y, int16_t dy, uint8_t dist, uint16_t time) {
   uint8_t animation = scale8(cos8(time), PLYWOOD_UNDERGLOW_VARIATION);
-  hsv.h = sub8_rollover(hsv.h, PLYWOOD_UNDERGLOW_VARIATION / 2) + animation;
+  hsv.h = add8_rollover(sub8_rollover(hsv.h, PLYWOOD_UNDERGLOW_VARIATION / 2), animation);
   return hsv;
 }
 
@@ -76,9 +76,11 @@ static HSV PLYWOOD_keylight(HSV hsv, uint16_t x, int16_t dx, uint16_t y, int16_t
       return PLYWOOD_layer_highlight(hsv, fast_phase, slow_phase);
     }
   }
-  if (y >= 62 || (x >= 87 && x <= 137)) {
+  if ((x == 0) || (x == 210) || y >= 62 || (x >= 87 && x <= 137)) {
+    uint8_t animation = scale8(fast_phase, PLYWOOD_KEYLIGHT_SHIFT);
+    hsv.s = qadd8(qsub8(hsv.s, PLYWOOD_KEYLIGHT_SHIFT / 2), animation);
     hsv.h = add8_rollover(hsv.h, PLYWOOD_KEYLIGHT_SHIFT);
-    hsv.v = hsv.v - scale8(0xFF - slow_phase, (hsv.v * 2) / 3);
+    hsv.v = hsv.v - scale8(slow_phase, (hsv.v * 2) / 3);
     return hsv;
   }
 
