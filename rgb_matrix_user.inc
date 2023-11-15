@@ -24,10 +24,10 @@ typedef struct {
 } plywood_keyindicator_t;
 
 static plywood_keyindicator_t plywood_keyindicator[] = {
-    {29, 2, 1},
-    {43, 0, 2},
-    {58, 2, 3},
-    {72, 4, 4},
+    {29, 2, 4},
+    {43, 0, 3},
+    {58, 2, 2},
+    {72, 4, 1},
 
     {152, 4, 1},
     {166, 2, 2},
@@ -76,7 +76,7 @@ static HSV PLYWOOD_keylight(HSV hsv, uint16_t x, int16_t dx, uint16_t y, int16_t
       return PLYWOOD_layer_highlight(hsv, fast_phase, slow_phase);
     }
   }
-  if (x >= 62 || (x >= 87 && x <= 137)) {
+  if (y >= 62 || (x >= 87 && x <= 137)) {
     hsv.h = add8_rollover(hsv.h, PLYWOOD_KEYLIGHT_SHIFT);
     hsv.v = hsv.v - scale8(0xFF - slow_phase, (hsv.v * 2) / 3);
     return hsv;
