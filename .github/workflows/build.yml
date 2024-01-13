@@ -17,6 +17,8 @@ jobs:
                   name: seniply
                 - file: plywood-tarmak2.json
                   name: plywood
+                - file: plywood2-tarmak2.json
+                  name: plywood2
         steps:
         - name: Disable git safe directory checks
           run : git config --global --add safe.directory '*'
