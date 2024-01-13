@@ -80,14 +80,4 @@ The layout turned out as follows, with a lot fewer layers.
 ![](_img/Plywood2_layer0.png)
 ![](_img/Plywood2_layer1.png)
 ![](_img/Plywood2_layer2.png)
-
-There is definitely still some probelms that needs to be adressed:
-- With the movement keys taking up the homerow on layer 1 now the OSM shift ends up on the upper row instead of right under the pointer fingers.
-  - Possible solutions:
-    - Get used to it
-      - The problem is slightly lesser when actually managing to activate the modifier with the other hand. Something that is slightly easier now that the keyboard isn't trying to be symmetrical.
-    - Move the movement keys down one row to have them in a slightly more traditional position.
-      - This would give the added benefit of not having to curl the fingers as much to reach all of the special characters on the lower row.
-      - On the other hand this would move the navigation keys out of the position I'm used to and how it aligns with the keypad.
-    - Move movement keys to a new layer
-      - Could have a 3x3 with the regular numbers on the opposite side for ease of access 
+![](_img/Plywood2_layer3.png)
