@@ -62,7 +62,15 @@ void render_plywood_layer_indicator(void) {
 
 
 void render_plywood_text(void) {
+    #if defined(SWAP_HANDS_ENABLE)
+    if (is_swap_hands_on()) {
+        oled_write_P(PSTR("<SWP>"), false);
+    } else {
+    #endif
     uint8_t value = get_current_wpm();
     oled_write_P(PSTR("W:"), false);
     oled_write(get_u8_str(value, ' '), false);
+    #if defined(SWAP_HANDS_ENABLE)
+    }
+    #endif
 }
