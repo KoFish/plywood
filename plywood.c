@@ -46,16 +46,18 @@ bool caps_word_press_user(uint16_t keycode) {
 }
 #endif // CAPS_WORDS
 
-#ifdef PLYWOOD_DISABLE_POWERLIGHT
 void keyboard_pre_init_user(void) {
+#ifdef PLYWOOD_DISABLE_POWERLIGHT
+#ifdef RP2040
     // Turn off power led on keyboard.
     // Set our LED pin as output
-    setPinOutput(24);
+    gpio_set_pin_output_push_pull(24);
     // Turn the LED off
     // (Due to technical reasons, high is off and low is on)
-    writePinHigh(24);
-}
+    gpio_write_pin_high(24);
 #endif
+#endif
+}
 
 void post_process_record_user(uint16_t keycode, keyrecord_t *record) {
     if (IS_QK_ONE_SHOT_MOD(keycode) && is_oneshot_layer_active() && record->event.pressed) {

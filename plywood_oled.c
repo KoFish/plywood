@@ -1,6 +1,7 @@
 #include QMK_KEYBOARD_H
 #include "plywood_oled.h"
 
+#ifdef OLED_ENABLE
 // LAYER OFF --------------------------------------------------------------------------------------
 
 static const char PROGMEM LAY_TOP_LEFT_OFF_1[] = {_TOP_LEFT_EMPTY_1, _TOP_EMPTY, 0};
@@ -74,3 +75,4 @@ void render_plywood_text(void) {
     }
     #endif
 }
+#endif
