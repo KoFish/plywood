@@ -14,9 +14,13 @@ jobs:
             matrix:
                 liatris-keymaps:
                 - file: plywood2-tarmak3.json
+                  name: plywood3-t3
+                - file: plywood2-colemak.json
                   name: plywood3
                 moonlander-keymaps:
                 - file: plywood2-tarmak3-moonlander.json
+                  name: plywood3-moonlander-t3
+                - file: plywood2-colemak-moonlander.json
                   name: plywood3-moonlander
         steps:
         - name: Disable git safe directory checks
